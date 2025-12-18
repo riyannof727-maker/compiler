@@ -1,0 +1,82 @@
+#include <a_samp>
+
+#define ADMIN_NAME "MAMAT"
+#define SERVER_NAME "Mortifera Nusantara"
+#define SERVER_IP "15.235.181.136"
+#define SERVER_PORT 10713
+
+new Admin[MAX_PLAYERS];
+
+public OnGameModeInit()
+{
+    SetGameModeText(SERVER_NAME);
+    SendRconCommand("hostname " SERVER_NAME);
+    SendRconCommand("gamemodetext " SERVER_NAME);
+    return 1;
+}
+
+public OnPlayerConnect(playerid)
+{
+    Admin[playerid] = 0;
+    SendClientMessage(playerid, -1, "Selamat datang di " SERVER_NAME "!");
+    return 1;
+}
+
+public OnPlayerCommandText(playerid, cmdtext[])
+{
+    if (strcmp(GetPlayerName(playerid), ADMIN_NAME, true) == 0)
+    {
+        Admin[playerid] = 1;
+    }
+    if (Admin[playerid] == 1)
+    {
+        if (strcmp(cmdtext, "/skin", true) == 0)
+        {
+            new skinid;
+            if (sscanf(cmdtext, "d", skinid))
+            {
+                SendClientMessage(playerid, -1, "Gunakan: /skin [ID skin]");
+                return 1;
+            }
+            if (skinid < 0 || skinid > 312)
+            {
+                SendClientMessage(playerid, -1, "ID skin tidak valid!");
+                return 1;
+            }
+            SetPlayerSkin(playerid, skinid);
+            SendClientMessage(playerid, -1, "Skin berhasil diganti!");
+            return 1;
+        }
+        else if (strcmp(cmdtext, "/kendaraan", true) == 0)
+        {
+            new vehicleid;
+            if (sscanf(cmdtext, "d", vehicleid))
+            {
+                SendClientMessage(playerid, -1, "Gunakan: /kendaraan [ID kendaraan]");
+                return 1;
+            }
+            new Float:x, Float:y, Float:z;
+            GetPlayerPos(playerid, x, y, z);
+            CreateVehicle(vehicleid, x, y, z, 0, -1, -1, 60);
+            SendClientMessage(playerid, -1, "Kendaraan berhasil dibuat!");
+            return 1;
+        }
+        else if (strcmp(cmdtext, "/senjata", true) == 0)
+        {
+            new weaponid;
+            if (sscanf(cmdtext, "d", weaponid))
+            {
+                SendClientMessage(playerid, -1, "Gunakan: /senjata [ID senjata]");
+                return 1;
+            }
+            GivePlayerWeapon(playerid, weaponid, 999);
+            SendClientMessage(playerid, -1, "Senjata berhasil diberikan!");
+            return 1;
+        }
+    }
+    else
+    {
+        SendClientMessage(playerid, -1, "Anda tidak memiliki akses!");
+    }
+    return 0;
+}
